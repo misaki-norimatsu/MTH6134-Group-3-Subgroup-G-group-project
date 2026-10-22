@@ -60,6 +60,9 @@ summary(model_injury)
 exp(coef(model_injury))
 #Calculate confidence intervals for odds ratios
 exp(confint(model_injury))
+#For age, the estimated coefficient is positive, suggesting that the older players tend to have higher odds of injury when BMI, training load and previous injuries are held constant. Since the p-value is below 0.05, there is statistical evidence of an association between age and injury status in this model.
+#For BMI, the estimate is negative, suggesting slightly lower injury odds for players with higher BMI, holding the other variables constant. However, the p-value is much larger than 0.05, which means the model doesn't provide clear statistical evidence of an association between BMI and injury status after adjusting for the other predictors. It suggests that the data may not provide enough evidence to establish a relationship between BMI and injury.
+
 
 
 #Example 2: Player playing time

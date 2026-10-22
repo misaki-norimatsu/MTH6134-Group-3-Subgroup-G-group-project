@@ -2,16 +2,11 @@
 install.packages("arm")
 library(arm)
 
-setwd("C:/Users/sasha/Downloads")
-getwd()
-
-
-league<-read.csv("league_players.csv", header=TRUE)
-matches<-read.csv("ashford_matches.csv", header=TRUE)
+source("code/load_data.R")
 
 #The variable injured is binomial, with 1 injured and 0 not injured, so a binomial glm is appropriate.
 
-glm<-glm(league$injured ~ league$age + league$minutes_played + league$bmi + league$training_load + league$prev_injuries, data = league, family = "binomial")
+glm<-glm(injured ~ age + minutes_played + bmi + training_load + prev_injuries, data = league, family = "binomial")
 summary(glm)
 
 #Age, and previous injuries have very low p values so is strongly significant predictor of injuries. Training load is also a significant predictor. As these are positive coefficients estimates, this suggests that as age, training load, and previous injuries increase, the probability of injuries increase. 
@@ -39,7 +34,7 @@ binnedplot(x = fitted(glm),
 
 #Most points are within the bands, suggesting an acceptable fit, however they are not very centered around the zero line, and 6 points are outside which may indicate some lack of fit, with the model not capturing the relationship between injuries and other explanatory variables. 
 
-glm_2<-glm(league$injured ~ league$age * league$minutes_played, data = league, family = "binomial")
+glm_2<-glm(injured ~ age * minutes_played, data = league, family = "binomial")
 summary(glm_2)
 
 #All the terms in this model are not significant. The difference between ages and minutes played is not significant. This suggests age, minutes played and their interaction are not good predictors of injuries by themselves.
@@ -50,3 +45,10 @@ binnedplot(x = fitted(glm_2),
            xlab = "Fitted probability")
 
 #More of  the points are within the bands, and less concentrated around lower probabilities, however the significance and deviance of the model suggests a bad fit.
+
+par(mfrow=c(1,2))
+plot(fitted(glm), resid(glm, type="deviance"),
+     xlab="Fitted", ylab="Deviance Residual", main="Linear fit")
+plot(fitted(glm), resid(glm, type="pearson"),
+     xlab="Fitted", ylab="Pearson Residual", main="Linear fit")
+par(mfrow=c(1,1))
