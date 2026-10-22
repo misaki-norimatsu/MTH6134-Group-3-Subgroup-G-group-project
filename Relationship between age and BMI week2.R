@@ -1,0 +1,8 @@
+plot(age,bmi,xlab = "Age (years)",ylab = "BMI",main = "Age vs BMI", pch = 19)
+model2=lm(bmi~age,data = data)
+summary(model2)
+anova(model2)
+plot(age,bmi,xlab = "Age (years)",ylab = "BMI",main = "Age vs BMI")
+abline(model2,col("orange"),lwd=2)
+qqnorm(rstudent(model2),main=null)
+qqline(rstudent(model2),lwd=2)
