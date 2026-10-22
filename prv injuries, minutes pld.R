@@ -14,3 +14,4 @@ abline(model2, col = "orange", lwd = 2)
 #The scatterplot examining previouus injuries against minutes played shows no clear
 #linear relationship between two variables.The regression line is almost horizontal,
 #indicating that previous injury history has very little association with playing time.
+
