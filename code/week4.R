@@ -23,10 +23,14 @@ exp(summary(glm)$coef[6,1])
 confint.default(glm)
 #Minutes played and bmi include 0 in the Confidence Interval which means it could be 0 and have no significant effect on probability of injury.
 
+par(mfrow=c(1,2))
+plot(fitted(glm), resid(glm, type="deviance"),
+     xlab="Fitted", ylab="Deviance Residual", main="Linear fit")
+plot(fitted(glm), resid(glm, type="pearson"),
+     xlab="Fitted", ylab="Pearson Residual", main="Linear fit")
+par(mfrow=c(1,1))
 
-plot(fitted(glm),resid(glm))
-
-#The residual vs fitted plot have two curved lines of points which is expected for a binary response variable. The symmetric residuals are two smooth curves.
+#The residual vs fitted plot have two curved lines of points which is expected for a binary response variable. The symmetric residuals are two smooth curves, which suggests linear is not appropriate. The pearson and deviance residual plots look similar, however pearson have more curvature. This could suggest a misfit, or the model is not capturing all of the variance. Could test interaction, transformation or polynomial terms.
 
 binnedplot(x = fitted(glm),
            y = resid(glm),
@@ -40,15 +44,39 @@ summary(glm_2)
 #All the terms in this model are not significant. The difference between ages and minutes played is not significant. This suggests age, minutes played and their interaction are not good predictors of injuries by themselves.
 #The residual deviance(577.17) is higher than the previous model(538.55), so may be a worse fit.
 
-binnedplot(x = fitted(glm_2),
-           y = resid(glm_2),
-           xlab = "Fitted probability")
+glm_3<-glm(injured ~ age * training_load, data = league, family = "binomial")
+summary(glm_3)
 
-#More of  the points are within the bands, and less concentrated around lower probabilities, however the significance and deviance of the model suggests a bad fit.
+#All the terms in this model are significant. The difference between ages and training load is significant as their interaction is significant, may be necessary to include interaction in model.
+#The residual deviance(559.01) is higher than the model with no interaction(538.55), so may be a worse fit.
+
+glm_full_interaction<-glm(injured ~ age + minutes_played + bmi + training_load + prev_injuries +  age * training_load, data = league, family = "binomial")
+summary(glm_full_interaction)
+
+#With the interaction added to the full model, the residual deviance (525.05) is lower than without interaction (538.55) so it may be a better fit.
+
+r1<-residuals(glm)
+r2<-residuals(glm_full_interaction)
+common_ylim <- range(c(r1, r2))
 
 par(mfrow=c(1,2))
-plot(fitted(glm), resid(glm, type="deviance"),
-     xlab="Fitted", ylab="Deviance Residual", main="Linear fit")
-plot(fitted(glm), resid(glm, type="pearson"),
+plot(fitted(glm_full_interaction), resid(glm_full_interaction, type="deviance"),
+     xlab="Fitted", ylab="Deviance Residual", ylim= common_ylim, main="Linear fit")
+plot(fitted(glm_full_interaction), resid(glm_full_interaction, type="pearson"),
      xlab="Fitted", ylab="Pearson Residual", main="Linear fit")
 par(mfrow=c(1,1))
+
+binnedplot(x = fitted(glm_full_interaction),
+           y = resid(glm_full_interaction),
+           xlab = "Fitted probability")
+#More of the points are within the bands, suggesting an acceptable fit, however they are not very centered around the zero line with most underneath, and 6 points are outside which may indicate some lack of fit, with the model not capturing the relationship between injuries and other explanatory variables. 
+
+glm_4<-glm(injured ~ age * prev_injuries, data = league, family = "binomial")
+summary(glm_2)
+
+#The interaction is not significant.
+
+glm_5<-glm(injured ~ age * bmi, data = league, family = "binomial")
+summary(glm_2)
+
+#The interaction is not significant.
