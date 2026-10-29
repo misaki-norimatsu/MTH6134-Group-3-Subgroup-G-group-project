@@ -94,3 +94,6 @@ summary(glm_6)
 #The interaction is not significant.
 
 #When analysing the significant variables, the only interaction that is significant is between age and training load.
+
+
+##Overall, the binomial model has a moderate fit, even with interaction added, because the binned plot is not centered around zero with some outliers, although the residual deviance decrease, it does not explain all of the variance or relationship between the variables.
