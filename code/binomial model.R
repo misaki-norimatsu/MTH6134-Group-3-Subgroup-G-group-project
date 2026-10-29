@@ -50,10 +50,16 @@ summary(glm_3)
 #All the terms in this model are significant. The difference between ages and training load is significant as their interaction is significant, may be necessary to include interaction in model.
 #The residual deviance(559.01) is higher than the model with no interaction(538.55), so may be a worse fit.
 
+
+
 glm_full_interaction<-glm(injured ~ age + minutes_played + bmi + training_load + prev_injuries +  age * training_load, data = league, family = "binomial")
 summary(glm_full_interaction)
 
 #With the interaction added to the full model, the residual deviance (525.05) is lower than without interaction (538.55) so it may be a better fit.
+#The effect of age on log odds of injuries is -2.560e-01, when training load is not considered. With the interaction term (1.100e-01) this change in log odds of injuries per unit increase in training load. The interaction is p=0.000359 so is strongly statistically significant.
+
+anova(glm, glm_full_interaction, test= "Chisq")
+#The p values is 0.0002387 so adding the interaction did significantly improve the fit.
 
 r1<-residuals(glm)
 r2<-residuals(glm_full_interaction)
@@ -63,8 +69,9 @@ par(mfrow=c(1,2))
 plot(fitted(glm_full_interaction), resid(glm_full_interaction, type="deviance"),
      xlab="Fitted", ylab="Deviance Residual", ylim= common_ylim, main="Linear fit")
 plot(fitted(glm_full_interaction), resid(glm_full_interaction, type="pearson"),
-     xlab="Fitted", ylab="Pearson Residual", main="Linear fit")
+     xlab="Fitted", ylab="Pearson Residual", ylim= c(-1,5), main="Linear fit")
 par(mfrow=c(1,1))
+#The model with interaction has wider range of probabilities up to 0.8, and has a changed density of points.
 
 binnedplot(x = fitted(glm_full_interaction),
            y = resid(glm_full_interaction),
@@ -77,6 +84,13 @@ summary(glm_2)
 #The interaction is not significant.
 
 glm_5<-glm(injured ~ age * bmi, data = league, family = "binomial")
-summary(glm_2)
+summary(glm_5)
+
+#The interaction is slightly significant, however it is less significant then training_load so have focused on training_load. May revisit this interaction if using this model.
+
+glm_6<-glm(injured ~ training_load * prev_injuries, data = league, family = "binomial")
+summary(glm_6)
 
 #The interaction is not significant.
+
+#When analysing the significant variables, the only interaction that is significant is between age and training load.
