@@ -1,5 +1,10 @@
 - set up github workspace (Misaki, Sasha)
 - read in data sets and summary statistics and plots, linear model for league players (Usman)
 - summary statistics and plots, minutes played, and relationship between age and BMI for Ashford players (Abenezer)
-- week 3 Misaki
-- fit binomial model, log odds, plots and binned plot (Sasha)
+- looked at generalised linear models and explanatory variables and tried fitting some glms (Misaki)
+- fit binomial model and analysis including log odds, diagnostic plots and binned plot and interaction (Sasha)
+- Each did residuals and diagnostics on models that we have fitted (Misaki, Sasha, Abenezer, Usman)
+- fit poisson regression model (Usman)(currently working on)
+- Explore relationships between categorical variables in data (Sasha, Misaki)(currently working on)
+- specialised models (everyone)(currently working on)
+- generalised linear mixed models (Abenezer)(currently working on)
