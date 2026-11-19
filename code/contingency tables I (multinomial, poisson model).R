@@ -42,3 +42,8 @@ summary(model_Q)
 #Both predictors are significant, with opponent rank high significant so both have an effect on goals scored.
 exp(0.69315) #Shows odds of  scoring goals are twice that at home than away.
 exp(0.05435) #Shows odds of scoring with a higher rank is less than odds of opponents with lower rank.
+
+model_y<- glm(goals_conceded ~ home_away +opponent_rank, family= poisson)
+summary(model_y)
+#The model has residual deviance 32.797, and null deviance of 41.566, shows the model is reasonable.
+#Opponent rank is significant, with opponent rank significant at 0.0293 so has an effect on goals conceded, although home_away is the lowest significance with p-value 0.558.
