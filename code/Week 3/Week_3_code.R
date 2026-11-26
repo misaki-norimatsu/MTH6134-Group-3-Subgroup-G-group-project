@@ -114,6 +114,99 @@ axis(
 # Add the reference line for an odds ratio of 1
 abline(v = 1, lty = 2, col = "grey40")
 
+#residuals and diagnostics for example 1:
+
+# Calculate predicted probabilities of injury
+predicted_prob <- fitted(model_injury)
+# Calculate raw residuals
+raw_residuals <- players$injured - predicted_prob
+# Look at the first six players
+head(data.frame(
+  observed = players$injured,
+  predicted_probability = predicted_prob,
+  residual = raw_residuals
+))
+# Calculate Pearson residuals
+pearson_residuals <- residuals(
+  model_injury,
+  type = "pearson"
+)
+# Plot residuals against predicted probabilities
+plot(
+  fitted(model_injury),
+  pearson_residuals,
+  xlab = "Predicted probability of injury",
+  ylab = "Pearson residuals",
+  main = "Residuals vs fitted probabilities",
+  pch = 19
+)
+# Add a reference line at zero
+abline(h = 0, lty = 2)
+# Calculate deviance residuals
+dev_res <- residuals(model_injury, type = "deviance")
+# Plot their distribution
+hist(
+  dev_res,
+  main = "Distribution of deviance residuals",
+  xlab = "Deviance residual",
+  breaks = 20
+)
+# Identify the five largest absolute residuals
+head(
+  sort(abs(dev_res), decreasing = TRUE),
+  5
+)
+# Calculate Cook's distances
+cook <- cooks.distance(model_injury)
+# Plot Cook's distances
+plot(
+  cook,
+  type = "h",
+  xlab = "Player observation",
+  ylab = "Cook's distance",
+  main = "Influence of individual players"
+)
+# Add a rough reference threshold
+abline(h = 4 / nrow(players), lty = 2, col = "red")
+# Identify the five largest values
+head(sort(cook, decreasing = TRUE), 5)
+par(mfrow = c(2, 2))
+plot(model_injury, which = 1)
+plot(model_injury, which = 2)
+plot(model_injury, which = 4)
+plot(model_injury, which = 5)
+par(mfrow = c(1, 1))
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+# Reset the margins
+par(mar = c(4, 4, 2, 1))
+# Display one diagnostic plot
+plot(model_injury, which = 1)
+# Set a 2 by 2 plotting layout
+par(mfrow = c(2, 2))
+# Reduce the margins
+par(mar = c(3, 3, 2, 1))
+# Diagnostic plots
+plot(model_injury, which = 1)
+plot(model_injury, which = 2)
+plot(model_injury, which = 4)
+plot(model_injury, which = 5)
+# Reset plotting layout
+par(mfrow = c(1, 1))
+
+#Analysis from residuals and diagnostics:
+#the residual vs fitted plot showed two curved band of points which is expected for a binary response variable.
+#the smooth trend line remained relatively close to zero, with no strong pattern apparent.
+#q-q plot showed points moving further away from the reference line indicating that the deviance residuals were not normally distributed, but normality of residuals is not a required assumption of logistic regression so this plot shouldn't be treated as a decisive indication of poor model fit.
+#Cook's distance and residuals-versus-leverage plots identified several potentially influential observations. The five largest Cook's distances ranged from approximately 0.0205 to 0.0265, exceeding the rough screening threshold of (4/620 = 0.00645). Observations 238, 101, 169, 546 and 281 were therefore selected for further investigation. Several of these observations also had relatively large deviance residuals.
+#Overall, the diagnostic plots suggest that the model is a reasonable starting point, although some individual observations may have a relatively large influence on the estimated coefficients. These observations should be checked for data-entry errors or unusual characteristics before deciding whether any further modelling adjustments are necessary.
+
+players[c(238, 101, 169, 546, 281), ]
+#Further investigation of the five observations with the largest Cook's distances showed that all five players had an injury recorded. 
+#Four had no previous injuries, and three had the lowest training-load rating of 1. 
+#These characteristics may help explain why these observations were relatively influential, since the fitted model estimated higher injury odds for players with greater training loads and more previous injuries. 
+#However, no obviously impossible values were identified in the records. The observations were therefore retained rather than removed, as there was no clear evidence that they were data errors.
+
 
 #Example 2: Player playing time
 #Response variable: minutes_played
@@ -133,6 +226,38 @@ par(mfrow = c(2, 2))
 plot(model_minutes)
 par(mfrow = c(1, 1))
 
+#Analysis of example 2:
+
+#Residuals and diagnostics for example 2:
+#four diagnostic plots
+par(mfrow = c(2, 2))
+par(mar = c(4, 4, 2, 1))
+plot(model_minutes, which = 1)
+plot(model_minutes, which = 2)
+plot(model_minutes, which = 4)
+plot(model_minutes, which = 5)
+par(mfrow = c(1, 1))
+#calculate residuals
+predicted_minutes <- fitted(model_minutes)
+raw_residuals_minutes <- residuals(model_minutes)
+head(data.frame(
+  observed = players$minutes_played,
+  predicted = predicted_minutes,
+  residual = raw_residuals_minutes
+))
+# Largest absolute residuals
+head(sort(abs(rstudent(model_minutes)), decreasing = TRUE), 5)
+# Cook's distances
+cook_minutes <- cooks.distance(model_minutes)
+head(sort(cook_minutes, decreasing = TRUE), 5)
+# Rough screening threshold
+4 / nrow(players)
+
+#Analysis from residuals and diagnostics:
+
+players[c(531, 43, 169, 40, 466), ]
+players[c(531, 43, 480, 65, 53), ]
+
 
 #Example 3: Goals scored per match
 #Response variable: goals_scored
@@ -141,17 +266,64 @@ par(mfrow = c(1, 1))
 #Potential model: Poisson regression
 
 #model for example 3
-model_goals <- glm(
+model_scored <- glm(
   goals_scored ~ home_away + opponent_rank,
   family = poisson(link = "log"),
   data = matches
 )
 #the results
-summary(model_goals)
+summary(model_scored)
 #Convert coefficients to expected-goal ratios
-exp(coef(model_goals))
+exp(coef(model_scored))
 #Check residual deviance relative to residual degrees of freedom
-deviance(model_goals) / df.residual(model_goals)
+deviance(model_scored) / df.residual(model_scored)
+
+#Analysis for example 3:
+
+#Residuals and diagnostics for example 3:
+#produce diagnostic plots
+par(mfrow = c(2, 2))
+par(mar = c(4, 4, 2, 1))
+plot(model_scored, which = 1)
+plot(model_scored, which = 2)
+plot(model_scored, which = 4)
+plot(model_scored, which = 5)
+par(mfrow = c(1, 1))
+#compare observed and predicted goals
+predicted_scored <- fitted(model_scored)
+pearson_scored <- residuals(
+  model_scored,
+  type = "pearson"
+)
+head(data.frame(
+  observed = matches$goals_scored,
+  predicted = predicted_scored,
+  residual = pearson_scored
+))
+#check for overdispersion
+dispersion_scored <- sum(pearson_scored^2) /
+  df.residual(model_scored)
+dispersion_scored
+#deviance ratio
+deviance(model_scored) / df.residual(model_scored)
+#check influential matches
+cook_scored <- cooks.distance(model_scored)
+head(sort(cook_scored, decreasing = TRUE), 5)
+# Rough screening threshold
+4 / nrow(matches)
+top_scored <- order(cook_scored, decreasing = TRUE)[1:5]
+matches[top_scored, ]
+
+#Analysis from residuals and diagnostics:
+
+matches[8, ]
+data.frame(
+  match = 8,
+  actual_goals = matches$goals_scored[8],
+  predicted_goals = fitted(model_scored)[8],
+  pearson_residual = residuals(model_scored, type = "pearson")[8],
+  cooks_distance = cooks.distance(model_scored)[8]
+)
 
 
 #Example 4: Goals conceded per match
@@ -173,6 +345,42 @@ exp(coef(model_conceded))
 #Rough overdispersion check
 deviance(model_conceded) / df.residual(model_conceded)
 
+#Analysis for example 4:
+
+#Residuals and diagnostics for example 4:
+#diagnostic plots
+par(mfrow = c(2, 2))
+par(mar = c(4, 4, 2, 1))
+plot(model_conceded, which = 1)
+plot(model_conceded, which = 2)
+plot(model_conceded, which = 4)
+plot(model_conceded, which = 5)
+par(mfrow = c(1, 1))
+#calculate residuals
+predicted_conceded <- fitted(model_conceded)
+pearson_conceded <- residuals(
+  model_conceded,
+  type = "pearson"
+)
+head(data.frame(
+  observed = matches$goals_conceded,
+  predicted = predicted_conceded,
+  residual = pearson_conceded
+))
+#check overdispersion
+dispersion_conceded <- sum(pearson_conceded^2) /
+  df.residual(model_conceded)
+dispersion_conceded
+deviance(model_conceded) / df.residual(model_conceded)
+#identify influential matches
+cook_conceded <- cooks.distance(model_conceded)
+head(sort(cook_conceded, decreasing = TRUE), 5)
+# Inspect the five most influential matches
+top_conceded <- order(cook_conceded, decreasing = TRUE)[1:5]
+matches[top_conceded, ]
+
+#Analysis from residuals and diagnostics:
+
 
 #Example 5: Previous player injuries
 #Response: prev_injuries
@@ -181,18 +389,55 @@ deviance(model_conceded) / df.residual(model_conceded)
 #Potential model: Poisson regression?
 
 #model for example 5
-model_prev_injuries <- glm(
+model_prev <- glm(
   prev_injuries ~ age + bmi + training_load,
   family = poisson(link = "log"),
   data = players
 )
 #the results
-summary(model_prev_injuries)
+summary(model_prev)
 #Convert coefficients to ratios
-exp(coef(model_prev_injuries))
+exp(coef(model_prev))
 #Rough overdispersion check
-deviance(model_prev_injuries) /
-  df.residual(model_prev_injuries)
+deviance(model_prev) /
+  df.residual(model_prev)
+
+#Analysis for example 5:
+
+#Residuals and diagnostics for example 5:
+#diagnostic plot
+par(mfrow = c(2, 2))
+par(mar = c(4, 4, 2, 1))
+plot(model_prev, which = 1)
+plot(model_prev, which = 2)
+plot(model_prev, which = 4)
+plot(model_prev, which = 5)
+par(mfrow = c(1, 1))
+#calculate residuals
+predicted_prev <- fitted(model_prev)
+pearson_prev <- residuals(
+  model_prev,
+  type = "pearson"
+)
+head(data.frame(
+  observed = players$prev_injuries,
+  predicted = predicted_prev,
+  residual = pearson_prev
+))
+#check overdispersion
+dispersion_prev <- sum(pearson_prev^2) /
+  df.residual(model_prev)
+dispersion_prev
+deviance(model_prev) / df.residual(model_prev)
+#identify influential players
+cook_prev <- cooks.distance(model_prev)
+head(sort(cook_prev, decreasing = TRUE), 5)
+# Rough screening threshold
+4 / nrow(players)
+top_prev <- order(cook_prev, decreasing = TRUE)[1:5]
+players[top_prev, ]
+
+#Analysis from residuals and diagnostics:
 
 
 # Compare model summaries
