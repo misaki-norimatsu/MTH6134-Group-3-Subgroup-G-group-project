@@ -46,4 +46,8 @@ exp(0.05435) #Shows odds of scoring with a higher rank is less than odds of oppo
 model_y<- glm(goals_conceded ~ home_away +opponent_rank, family= poisson)
 summary(model_y)
 #The model has residual deviance 32.797, and null deviance of 41.566, shows the model is reasonable.
+<<<<<<< HEAD
 #Opponent rank is significant, with opponent rank significant at 0.0293 so has an effect on goals conceded, although home_away is the lowest significance with p-value 0.0558.
+=======
+#Opponent rank is significant, with opponent rank significant at 0.0293 so has an effect on goals conceded, although home_away is the lowest significance with p-value 0.558.
+>>>>>>> 83c5ce26c69ac7918ec1fac504f20f300c8d9cf1

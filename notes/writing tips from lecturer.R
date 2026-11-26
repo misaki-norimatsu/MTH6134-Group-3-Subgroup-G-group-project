@@ -7,8 +7,9 @@
 #choose model eg poisson because count model selection drop in deviance AIC or Etc
 #decision on whether to remove outliers.
 
-
 #how  to do in one page bc w7 is 2 model selection steps in appendix and summary sentence. need to understand what you've done w/o
 #will split writing by the person who suggested the code will write a different model/question.
 #what kind of diagram do you want in individual interaction plots and proportions eg. probability of insurance goes up if you have attempt.
 #make sure the diagrams are centered and say the axes not number proportion.
+
+#Exploratory analysis should be built on proportions rather than counts.
