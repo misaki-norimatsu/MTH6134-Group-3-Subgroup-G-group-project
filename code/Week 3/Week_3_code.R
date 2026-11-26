@@ -448,5 +448,5 @@ AIC(model_conceded)
 AIC(model_prev_injuries)
 
 #Example 1 question: What factors are associated with player injury status? (binary logistic model)
-#Example 3 question: How are hom advantage and opponent ranking associated with goals scored? (Poisson count model)
+#Example 3 question: How are home advantage and opponent ranking associated with goals scored? (Poisson count model)
 #Example 2 question: How are age, position, and training load associated with playing time? (Continuous linear model)
